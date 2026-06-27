@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Work — Plansman Inc</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Helvetica Neue", Arial, sans-serif; color: #2c3e50; background: transparent; }
+.ew-wrap { max-width: 1000px; margin: 0 auto; padding: 24px; }
+.ew-sub { text-align: center; color: #888; font-size: 16px; margin-bottom: 24px; }
+
+/* Login */
+.ew-login { max-width: 380px; margin: 8px auto 0; }
+.ew-login label { display: block; font-size: 13px; font-weight: 700; color: #777;
+  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.ew-login input { width: 100%; padding: 14px 16px; font-size: 18px; border: 2px solid #ddd;
+  border-radius: 8px; outline: none; font-family: inherit; margin-bottom: 16px; }
+.ew-login input:focus { border-color: #2c5f8a; }
+.ew-login button { width: 100%; padding: 14px; font-size: 17px; font-weight: 600; background: #2c5f8a;
+  color: #fff; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; }
+.ew-login button:hover { background: #1e4263; }
+.ew-login button:disabled { background: #999; cursor: not-allowed; }
+.ew-back { display: inline-block; margin-top: 14px; color: #2c5f8a; font-size: 14px;
+  cursor: pointer; text-decoration: none; }
+.ew-greet { text-align: center; font-size: 18px; color: #1a1a2e; margin-bottom: 18px; font-weight: 600; }
+.ew-err { text-align: center; color: #c0392b; padding: 12px; font-size: 15px; }
+
+/* Results */
+.ew-hdr { display: flex; justify-content: space-between; align-items: baseline;
+  flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.ew-hdr h2 { font-size: 22px; color: #1a1a2e; }
+.ew-logout { color: #2c5f8a; font-size: 14px; cursor: pointer; }
+.ew-section-title { font-size: 13px; font-weight: 700; color: #777; text-transform: uppercase;
+  letter-spacing: .5px; margin: 26px 0 10px; }
+.ew-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #e0e0e0;
+  border-radius: 12px; }
+table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
+.ew-tbl th { background: #f0f4f8; color: #2c5f8a; text-align: left; padding: 11px 12px;
+  font-size: 12px; text-transform: uppercase; letter-spacing: .3px; white-space: nowrap;
+  border-bottom: 2px solid #d0d8e0; }
+.ew-tbl td { padding: 11px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+.ew-tbl tr:last-child td { border-bottom: none; }
+.ew-job { font-weight: 700; color: #1a1a2e; white-space: nowrap; }
+.ew-addr { min-width: 180px; }
+.ew-badge { display: inline-block; padding: 4px 12px; border-radius: 16px; font-size: 12px;
+  font-weight: 700; border: 1.5px solid currentColor; white-space: nowrap; }
+.ew-muted { color: #999; }
+.ew-latest { color: #666; font-size: 13px; max-width: 260px; white-space: pre-line; }
+.ew-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ew-owed { color: #b86e00; font-weight: 700; }
+.ew-paid { color: #27763a; }
+.ew-total-row td { background: #f8f9fa; font-weight: 700; border-top: 2px solid #d0d8e0; }
+.ew-pay-detail { font-size: 12px; color: #777; }
+.ew-ftr { text-align: center; font-size: 12px; color: #bbb; margin-top: 28px; }
+</style>
+</head>
+<body>
+<div class="ew-wrap">
+  <p class="ew-sub" id="ew-sub">Sign in to see your projects</p>
+
+  <!-- STEP 1: name -->
+  <form class="ew-login" id="ew-name-form">
+    <label for="ew-name">Your name</label>
+    <input type="text" id="ew-name" placeholder="e.g. Frank" autocomplete="off" autofocus>
+    <button type="submit">Continue</button>
+  </form>
+
+  <!-- STEP 2: pin -->
+  <form class="ew-login" id="ew-pin-form" style="display:none">
+    <div class="ew-greet" id="ew-greet"></div>
+    <label for="ew-pin">Enter your PIN</label>
+    <input type="password" id="ew-pin" inputmode="numeric" autocomplete="off" placeholder="••••">
+    <button type="submit" id="ew-pin-btn">View my work</button>
+    <div class="ew-err" id="ew-login-err" style="display:none"></div>
+    <a class="ew-back" id="ew-back">&larr; Not you? Go back</a>
+  </form>
+
+  <!-- RESULTS -->
+  <div id="ew-results" style="display:none"></div>
+
+  <div class="ew-ftr">Plansman Inc &bull; Questions? Contact Lance</div>
+</div>
+
+<script>
+(function () {
+  var SB_URL = "https://kwcoqoizrwqxpfrkwkfv.supabase.co/rest/v1";
+  var SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3Y29xb2l6cndxeHBmcmt3a2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NzQxMjAsImV4cCI6MjA5MDE1MDEyMH0.UY0OW4BnbG0SRhxrgDGibqyKHsXrN9j-JJzx2KSMQzk";
+
+  var nameForm = document.getElementById("ew-name-form");
+  var pinForm  = document.getElementById("ew-pin-form");
+  var results  = document.getElementById("ew-results");
+  var sub      = document.getElementById("ew-sub");
+  var loginErr = document.getElementById("ew-login-err");
+  var pendingName = "";
+
+  nameForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var n = document.getElementById("ew-name").value.trim();
+    if (!n) return;
+    pendingName = n;
+    document.getElementById("ew-greet").textContent = "Hi " + n + " 👋";
+    nameForm.style.display = "none";
+    pinForm.style.display = "block";
+    sub.style.display = "none";
+    document.getElementById("ew-pin").focus();
+  });
+
+  document.getElementById("ew-back").addEventListener("click", function () {
+    pinForm.style.display = "none";
+    nameForm.style.display = "block";
+    sub.style.display = "";
+    loginErr.style.display = "none";
+    document.getElementById("ew-pin").value = "";
+    document.getElementById("ew-name").focus();
+  });
+
+  pinForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var pin = document.getElementById("ew-pin").value.trim();
+    if (!pin) return;
+    var btn = document.getElementById("ew-pin-btn");
+    btn.disabled = true; btn.textContent = "Checking...";
+    loginErr.style.display = "none";
+
+    fetch(SB_URL + "/rpc/get_employee_portal", {
+      method: "POST",
+      headers: { "apikey": SB_ANON, "Authorization": "Bearer " + SB_ANON,
+                 "Content-Type": "application/json" },
+      body: JSON.stringify({ p_name: pendingName, p_pin: pin })
+    })
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function (data) {
+      btn.disabled = false; btn.textContent = "View my work";
+      if (!data || !data.ok) {
+        loginErr.textContent = "Name or PIN not recognized. Try again.";
+        loginErr.style.display = "block";
+        return;
+      }
+      render(data);
+    })
+    .catch(function (err) {
+      btn.disabled = false; btn.textContent = "View my work";
+      loginErr.textContent = "Couldn't connect. Please try again.";
+      loginErr.style.display = "block";
+      console.error(err);
+    });
+  });
+
+  function esc(s) { var d = document.createElement("div"); d.textContent = (s == null ? "" : s); return d.innerHTML; }
+  function money(v) { if (v == null || v === "") return ""; var n = Number(v);
+    if (isNaN(n)) return esc(v); return "$" + n.toLocaleString("en-US"); }
+
+  function phaseBadge(phase) {
+    if (!phase) return '<span class="ew-muted">—</span>';
+    var bc = "#2c5f8a", bg = "#e8f4fd";
+    if (phase === "Approved" || phase === "Construction" || phase === "Complete") { bc = "#27763a"; bg = "#e8f8e8"; }
+    if (phase === "Client Review" || phase === "Backcheck") { bc = "#b86e00"; bg = "#fff3e0"; }
+    return '<span class="ew-badge" style="background:' + bg + ';color:' + bc + '">' + esc(phase) + '</span>';
+  }
+
+  function render(data) {
+    nameForm.style.display = "none";
+    pinForm.style.display = "none";
+    sub.style.display = "none";
+    results.style.display = "block";
+
+    var jobs = data.jobs || [];
+    var h = '<div class="ew-hdr"><h2>' + esc(data.employee || "My") + "&rsquo;s Projects</h2>" +
+            '<span class="ew-logout" id="ew-logout">Sign out</span></div>';
+
+    if (!jobs.length) {
+      h += '<p class="ew-muted" style="padding:20px 4px">No projects are assigned to you right now.</p>';
+      results.innerHTML = h;
+      wireLogout();
+      return;
+    }
+
+    // ── Workflow table ──
+    h += '<div class="ew-section-title">My Jobs</div><div class="ew-scroll"><table class="ew-tbl"><thead><tr>' +
+         '<th>Job #</th><th>Type</th><th>Address</th><th>Phase</th><th>Due</th><th>Days</th>' +
+         '<th>Status</th><th>Task</th><th>Latest</th></tr></thead><tbody>';
+    for (var i = 0; i < jobs.length; i++) {
+      var j = jobs[i];
+      var task = [j.sub_phase, j.sub_due ? "(" + j.sub_due + ")" : ""].filter(Boolean).join(" ");
+      h += "<tr>" +
+        '<td class="ew-job">' + esc(j.proj_no) + "</td>" +
+        "<td>" + (esc(j.type) || '<span class="ew-muted">—</span>') + "</td>" +
+        '<td class="ew-addr">' + (esc(j.address) || "") + "</td>" +
+        "<td>" + phaseBadge(j.phase) + "</td>" +
+        "<td>" + (esc(j.due_date) || '<span class="ew-muted">—</span>') + "</td>" +
+        '<td class="ew-num">' + (esc(j.days_till_due) || "") + "</td>" +
+        "<td>" + (esc(j.status) || "") + "</td>" +
+        "<td>" + (esc(task) || '<span class="ew-muted">—</span>') + "</td>" +
+        '<td class="ew-latest">' + (esc(j.sub_latest) || "") + "</td>" +
+      "</tr>";
+    }
+    h += "</tbody></table></div>";
+
+    // ── Financials ──
+    var totalAmt = 0, totalBal = 0, anyFin = false;
+    var fin = '<div class="ew-section-title">My Pay</div><div class="ew-scroll"><table class="ew-tbl"><thead><tr>' +
+              '<th>Job #</th><th>Address</th><th class="ew-num">Fee</th><th class="ew-num">Balance Owed</th>' +
+              '<th>Payments</th></tr></thead><tbody>';
+    for (var k = 0; k < jobs.length; k++) {
+      var job = jobs[k];
+      if (job.amount == null && job.balance == null && !(job.payments && job.payments.length)) continue;
+      anyFin = true;
+      if (job.amount != null) totalAmt += Number(job.amount) || 0;
+      if (job.balance != null) totalBal += Number(job.balance) || 0;
+      var pays = (job.payments || []).filter(function (p) { return p.paid; }).map(function (p) {
+        return money(p.paid) + (p.date ? " · " + esc(p.date) : "");
+      }).join("<br>");
+      fin += "<tr>" +
+        '<td class="ew-job">' + esc(job.proj_no) + "</td>" +
+        '<td class="ew-addr">' + (esc(job.address) || "") + "</td>" +
+        '<td class="ew-num">' + money(job.amount) + "</td>" +
+        '<td class="ew-num ' + (Number(job.balance) > 0 ? "ew-owed" : "ew-muted") + '">' + (money(job.balance) || "$0") + "</td>" +
+        '<td class="ew-pay-detail ew-paid">' + (pays || '<span class="ew-muted">—</span>') + "</td>" +
+      "</tr>";
+    }
+    fin += '<tr class="ew-total-row"><td colspan="2">Total</td>' +
+           '<td class="ew-num">' + money(totalAmt) + "</td>" +
+           '<td class="ew-num ew-owed">' + money(totalBal) + "</td><td></td></tr>";
+    fin += "</tbody></table></div>";
+
+    h += anyFin ? fin : "";
+    results.innerHTML = h;
+    wireLogout();
+  }
+
+  function wireLogout() {
+    var lo = document.getElementById("ew-logout");
+    if (lo) lo.addEventListener("click", function () {
+      results.style.display = "none";
+      results.innerHTML = "";
+      document.getElementById("ew-pin").value = "";
+      pinForm.style.display = "none";
+      nameForm.style.display = "block";
+      sub.style.display = "";
+      document.getElementById("ew-name").focus();
+    });
+  }
+})();
+</script>
+</body>
+</html>
