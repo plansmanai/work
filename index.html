@@ -7,7 +7,7 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: "Helvetica Neue", Arial, sans-serif; color: #2c3e50; background: transparent; }
-.ew-wrap { max-width: 1000px; margin: 0 auto; padding: 24px; }
+.ew-wrap { max-width: 920px; margin: 0 auto; padding: 24px; }
 .ew-sub { text-align: center; color: #888; font-size: 16px; margin-bottom: 24px; }
 
 /* Login */
@@ -26,13 +26,60 @@ body { font-family: "Helvetica Neue", Arial, sans-serif; color: #2c3e50; backgro
 .ew-greet { text-align: center; font-size: 18px; color: #1a1a2e; margin-bottom: 18px; font-weight: 600; }
 .ew-err { text-align: center; color: #c0392b; padding: 12px; font-size: 15px; }
 
-/* Results */
+/* Results header */
 .ew-hdr { display: flex; justify-content: space-between; align-items: baseline;
   flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-.ew-hdr h2 { font-size: 22px; color: #1a1a2e; }
+.ew-hdr h2 { font-size: 24px; color: #1a1a2e; }
 .ew-logout { color: #2c5f8a; font-size: 14px; cursor: pointer; }
-.ew-section-title { font-size: 13px; font-weight: 700; color: #777; text-transform: uppercase;
-  letter-spacing: .5px; margin: 26px 0 10px; }
+.ew-section-title { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase;
+  letter-spacing: .5px; margin: 26px 0 12px; }
+
+/* Job cards — phase + status are the focus, address is a quiet subtitle */
+.ew-card { background: #fff; border: 1px solid #e3e6ea; border-radius: 14px;
+  padding: 20px 22px; margin-bottom: 18px; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
+.ew-card-top { display: flex; justify-content: space-between; align-items: center;
+  gap: 10px; flex-wrap: wrap; }
+.ew-jobline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.ew-job { font-size: 19px; font-weight: 800; color: #1a1a2e; }
+.ew-type { font-size: 13px; color: #8a9099; }
+.ew-addr-sub { font-size: 12.5px; color: #a3a8ae; margin-top: 3px; }
+.ew-addr-sub .ew-meta { color: #b7bcc2; }
+.ew-badge { display: inline-block; padding: 7px 18px; border-radius: 20px; font-size: 15px;
+  font-weight: 700; letter-spacing: .2px; border: 2px solid currentColor; white-space: nowrap; }
+
+.ew-status-block { margin-top: 16px; }
+.ew-label { font-size: 11px; font-weight: 700; color: #9aa0a6; text-transform: uppercase;
+  letter-spacing: .6px; margin-bottom: 5px; }
+.ew-status-text { font-size: 16px; color: #1f2d3d; line-height: 1.55; font-weight: 500; }
+.ew-task-chip { display: inline-block; margin-top: 12px; padding: 5px 12px; border-radius: 8px;
+  background: #eef3f8; color: #2c5f8a; font-size: 13px; font-weight: 600; }
+.ew-latest { margin-top: 14px; }
+.ew-latest-text { font-size: 13px; color: #6b7280; line-height: 1.5; }
+.ew-muted { color: #aab; }
+
+/* Progress timeline (ported from the client status page) */
+.ew-tl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 20px; padding-bottom: 2px; }
+.ew-tl { display: flex; align-items: flex-start; position: relative; padding-top: 4px; min-width: 640px; }
+.ew-tl-step { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+.ew-tl-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #dfe3e7;
+  background: #fff; z-index: 1; position: relative; }
+.ew-tl-step.done .ew-tl-dot { background: #4a90c4; border-color: #4a90c4; }
+.ew-tl-step.active .ew-tl-dot { background: #2c5f8a; border-color: #2c5f8a;
+  box-shadow: 0 0 0 5px rgba(44,95,138,.2); width: 18px; height: 18px; }
+.ew-tl-step.complete-phase.active .ew-tl-dot { background: #27763a; border-color: #27763a;
+  box-shadow: 0 0 0 5px rgba(39,118,58,.2); }
+.ew-tl-lbl { font-size: 9px; color: #c2c6cb; margin-top: 7px; text-align: center;
+  line-height: 1.2; max-width: 58px; }
+.ew-tl-step.done .ew-tl-lbl { color: #8b9197; }
+.ew-tl-step.active .ew-tl-lbl { color: #2c5f8a; font-weight: 700; font-size: 10px; }
+.ew-tl-step.complete-phase.active .ew-tl-lbl { color: #27763a; }
+.ew-tl-conn { position: absolute; top: 6px; left: 50%; width: 100%; height: 3px;
+  background: #ebeef1; z-index: 0; }
+.ew-tl-step.active .ew-tl-conn { top: 8px; }
+.ew-tl-step.done .ew-tl-conn { background: #4a90c4; }
+.ew-tl-step:last-child .ew-tl-conn { display: none; }
+
+/* Pay table */
 .ew-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #e0e0e0;
   border-radius: 12px; }
 table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
@@ -41,17 +88,12 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
   border-bottom: 2px solid #d0d8e0; }
 .ew-tbl td { padding: 11px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
 .ew-tbl tr:last-child td { border-bottom: none; }
-.ew-job { font-weight: 700; color: #1a1a2e; white-space: nowrap; }
-.ew-addr { min-width: 180px; }
-.ew-badge { display: inline-block; padding: 4px 12px; border-radius: 16px; font-size: 12px;
-  font-weight: 700; border: 1.5px solid currentColor; white-space: nowrap; }
-.ew-muted { color: #999; }
-.ew-latest { color: #666; font-size: 13px; max-width: 260px; white-space: pre-line; }
 .ew-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .ew-owed { color: #b86e00; font-weight: 700; }
 .ew-paid { color: #27763a; }
 .ew-total-row td { background: #f8f9fa; font-weight: 700; border-top: 2px solid #d0d8e0; }
 .ew-pay-detail { font-size: 12px; color: #777; }
+.ew-tbl .ew-job { font-size: 14px; }
 .ew-ftr { text-align: center; font-size: 12px; color: #bbb; margin-top: 28px; }
 </style>
 </head>
@@ -86,6 +128,15 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
 (function () {
   var SB_URL = "https://kwcoqoizrwqxpfrkwkfv.supabase.co/rest/v1";
   var SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3Y29xb2l6cndxeHBmcmt3a2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NzQxMjAsImV4cCI6MjA5MDE1MDEyMH0.UY0OW4BnbG0SRhxrgDGibqyKHsXrN9j-JJzx2KSMQzk";
+
+  var DISPLAY = ["In Design", "Client Review", "Const. Docs.", "Submitted", "Backcheck",
+                 "Resubmitted", "Approved", "Construction", "Revision", "Complete"];
+  function phaseToIdx(p) {
+    var map = { "In Design": 0, "Client Review": 1, "Const. Docs": 2, "Const. Docs.": 2,
+      "Submitted": 3, "Plancheck": 3, "Backcheck": 4, "Resubmitted": 5, "Approved": 6,
+      "Construction": 7, "Revision": 8, "Complete": 9 };
+    return (p in map) ? map[p] : 0;
+  }
 
   var nameForm = document.getElementById("ew-name-form");
   var pinForm  = document.getElementById("ew-pin-form");
@@ -152,11 +203,56 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
     if (isNaN(n)) return esc(v); return "$" + n.toLocaleString("en-US"); }
 
   function phaseBadge(phase) {
-    if (!phase) return '<span class="ew-muted">—</span>';
+    if (!phase) return '<span class="ew-muted">No phase yet</span>';
     var bc = "#2c5f8a", bg = "#e8f4fd";
     if (phase === "Approved" || phase === "Construction" || phase === "Complete") { bc = "#27763a"; bg = "#e8f8e8"; }
     if (phase === "Client Review" || phase === "Backcheck") { bc = "#b86e00"; bg = "#fff3e0"; }
     return '<span class="ew-badge" style="background:' + bg + ';color:' + bc + '">' + esc(phase) + '</span>';
+  }
+
+  function timeline(phase) {
+    var idx = phaseToIdx(phase);
+    var h = '<div class="ew-tl-wrap"><div class="ew-tl">';
+    for (var i = 0; i < DISPLAY.length; i++) {
+      var cls = "ew-tl-step";
+      if (i < idx) cls += " done";
+      if (i === idx) cls += " active";
+      if (i === DISPLAY.length - 1) cls += " complete-phase";
+      h += '<div class="' + cls + '"><div class="ew-tl-conn"></div>' +
+           '<div class="ew-tl-dot"></div><div class="ew-tl-lbl">' + DISPLAY[i] + '</div></div>';
+    }
+    return h + "</div></div>";
+  }
+
+  function jobCard(j) {
+    var meta = [];
+    if (j.due_date) meta.push("Due " + esc(j.due_date));
+    if (j.days_till_due) meta.push(esc(j.days_till_due) + " days");
+    var metaStr = meta.length ? ' · <span class="ew-meta">' + meta.join(" · ") + "</span>" : "";
+
+    var h = '<div class="ew-card"><div class="ew-card-top">' +
+      '<div class="ew-jobline"><span class="ew-job">' + esc(j.proj_no) + "</span>" +
+      (j.type ? '<span class="ew-type">' + esc(j.type) + "</span>" : "") + "</div>" +
+      phaseBadge(j.phase) + "</div>";
+
+    if (j.address) h += '<div class="ew-addr-sub">' + esc(j.address) + metaStr + "</div>";
+
+    if (j.status) {
+      h += '<div class="ew-status-block"><div class="ew-label">Status</div>' +
+           '<div class="ew-status-text">' + esc(j.status) + "</div></div>";
+    }
+    if (j.sub_phase) {
+      h += '<div><span class="ew-task-chip">Task: ' + esc(j.sub_phase) +
+           (j.sub_due ? " · due in " + esc(j.sub_due) : "") + "</span></div>";
+    }
+    if (j.sub_latest && j.sub_latest !== j.status) {
+      h += '<div class="ew-latest"><div class="ew-label">Latest</div>' +
+           '<div class="ew-latest-text">' + esc(j.sub_latest) + "</div></div>";
+    }
+
+    h += timeline(j.phase);
+    h += "</div>";
+    return h;
   }
 
   function render(data) {
@@ -176,28 +272,11 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
       return;
     }
 
-    // ── Workflow table ──
-    h += '<div class="ew-section-title">My Jobs</div><div class="ew-scroll"><table class="ew-tbl"><thead><tr>' +
-         '<th>Job #</th><th>Type</th><th>Address</th><th>Phase</th><th>Due</th><th>Days</th>' +
-         '<th>Status</th><th>Task</th><th>Latest</th></tr></thead><tbody>';
-    for (var i = 0; i < jobs.length; i++) {
-      var j = jobs[i];
-      var task = [j.sub_phase, j.sub_due ? "(" + j.sub_due + ")" : ""].filter(Boolean).join(" ");
-      h += "<tr>" +
-        '<td class="ew-job">' + esc(j.proj_no) + "</td>" +
-        "<td>" + (esc(j.type) || '<span class="ew-muted">—</span>') + "</td>" +
-        '<td class="ew-addr">' + (esc(j.address) || "") + "</td>" +
-        "<td>" + phaseBadge(j.phase) + "</td>" +
-        "<td>" + (esc(j.due_date) || '<span class="ew-muted">—</span>') + "</td>" +
-        '<td class="ew-num">' + (esc(j.days_till_due) || "") + "</td>" +
-        "<td>" + (esc(j.status) || "") + "</td>" +
-        "<td>" + (esc(task) || '<span class="ew-muted">—</span>') + "</td>" +
-        '<td class="ew-latest">' + (esc(j.sub_latest) || "") + "</td>" +
-      "</tr>";
-    }
-    h += "</tbody></table></div>";
+    // ── Job cards (phase + status focus, progress bar each) ──
+    h += '<div class="ew-section-title">My Jobs</div>';
+    for (var i = 0; i < jobs.length; i++) h += jobCard(jobs[i]);
 
-    // ── Financials ──
+    // ── Pay ──
     var totalAmt = 0, totalBal = 0, anyFin = false;
     var fin = '<div class="ew-section-title">My Pay</div><div class="ew-scroll"><table class="ew-tbl"><thead><tr>' +
               '<th>Job #</th><th>Address</th><th class="ew-num">Fee</th><th class="ew-num">Balance Owed</th>' +
@@ -213,7 +292,7 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
       }).join("<br>");
       fin += "<tr>" +
         '<td class="ew-job">' + esc(job.proj_no) + "</td>" +
-        '<td class="ew-addr">' + (esc(job.address) || "") + "</td>" +
+        "<td>" + (esc(job.address) || "") + "</td>" +
         '<td class="ew-num">' + money(job.amount) + "</td>" +
         '<td class="ew-num ' + (Number(job.balance) > 0 ? "ew-owed" : "ew-muted") + '">' + (money(job.balance) || "$0") + "</td>" +
         '<td class="ew-pay-detail ew-paid">' + (pays || '<span class="ew-muted">—</span>') + "</td>" +
