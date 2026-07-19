@@ -4,10 +4,55 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My Work — Plansman Inc</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: "Helvetica Neue", Arial, sans-serif; color: #2c3e50; background: transparent; }
-.ew-wrap { max-width: 920px; margin: 0 auto; padding: 24px; }
+
+/* ── Site chrome (replicates plansman.com theme) ────────── */
+html, body { height: 100%; }
+body { font-family: 'Lato', "Helvetica Neue", Arial, sans-serif; color: #626262;
+  background: #222121; display: flex; flex-direction: column; }
+.pm-container { width: min(1240px, 94vw); margin: 0 auto; }
+
+#pm-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 14;
+  border-top: 3px solid #199ad0; background: rgba(0,0,0,0.85); }
+#pm-nav .pm-container { display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; }
+#pm-logo { display: flex; align-items: center; padding: 5px 0; }
+#pm-logo img { max-height: 42px; display: block; }
+#pm-nav ul { list-style: none; display: flex; flex-wrap: wrap; }
+#pm-nav ul li { text-transform: uppercase; margin-right: 5px; }
+#pm-nav ul li:last-child { margin-right: 0; }
+#pm-nav ul li a { display: block; font-family: 'Lato', sans-serif; color: #fff;
+  padding: 14px 12px; font-size: 13px; font-weight: bold; text-decoration: none; }
+#pm-nav ul li.pm-active a, #pm-nav ul li a:hover { color: #333; background: #199ad0; }
+
+#pm-main { flex: 1; width: 100%; background: #fff url('body-bg.png') 0 0 repeat;
+  padding: 76px 0 40px; }
+.pm-page-title { font-family: 'Bebas Neue', 'Bebas', sans-serif; font-weight: normal;
+  color: #3b3b3b; text-transform: uppercase; font-size: 32px; line-height: 37px;
+  text-align: center; padding: 18px 0 0; letter-spacing: .5px; }
+
+#pm-footer { width: 100%; background: #222121; padding: 35px 0 20px; }
+#pm-footer .pm-container { text-align: center; font-family: 'Bebas Neue', 'Bebas', sans-serif;
+  font-size: 22px; color: #d5d5d5; text-transform: lowercase; letter-spacing: .5px; }
+#pm-footer a { color: #d5d5d5; text-decoration: none; }
+#pm-footer a:hover { color: #199ad0; }
+#pm-footer .pm-dot { padding: 0 18px; color: #6a6a6a; }
+
+@media (max-width: 700px) {
+  #pm-nav .pm-container { justify-content: center; }
+  #pm-nav ul li a { padding: 10px 8px; font-size: 12px; }
+  #pm-main { padding-top: 108px; }
+  #pm-footer .pm-container { font-size: 16px; }
+  #pm-footer .pm-dot { padding: 0 8px; }
+}
+
+/* ── Portal app ─────────────────────────────────────────── */
+.ew-wrap { width: min(1240px, 94vw); margin: 0 auto; padding: 12px 0 24px; color: #2c3e50; }
 .ew-sub { text-align: center; color: #888; font-size: 16px; margin-bottom: 24px; }
 
 /* Login */
@@ -15,13 +60,13 @@ body { font-family: "Helvetica Neue", Arial, sans-serif; color: #2c3e50; backgro
 .ew-login label { display: block; font-size: 13px; font-weight: 700; color: #777;
   text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
 .ew-login input { width: 100%; padding: 14px 16px; font-size: 18px; border: 2px solid #ddd;
-  border-radius: 8px; outline: none; font-family: inherit; margin-bottom: 16px; }
-.ew-login input:focus { border-color: #2c5f8a; }
-.ew-login button { width: 100%; padding: 14px; font-size: 17px; font-weight: 600; background: #2c5f8a;
+  border-radius: 8px; outline: none; font-family: inherit; margin-bottom: 16px; background: #fff; }
+.ew-login input:focus { border-color: #199ad0; }
+.ew-login button { width: 100%; padding: 14px; font-size: 17px; font-weight: 600; background: #199ad0;
   color: #fff; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; }
-.ew-login button:hover { background: #1e4263; }
+.ew-login button:hover { background: #1688b7; }
 .ew-login button:disabled { background: #999; cursor: not-allowed; }
-.ew-back { display: inline-block; margin-top: 14px; color: #2c5f8a; font-size: 14px;
+.ew-back { display: inline-block; margin-top: 14px; color: #199ad0; font-size: 14px;
   cursor: pointer; text-decoration: none; }
 .ew-greet { text-align: center; font-size: 18px; color: #1a1a2e; margin-bottom: 18px; font-weight: 600; }
 .ew-err { text-align: center; color: #c0392b; padding: 12px; font-size: 15px; }
@@ -29,8 +74,8 @@ body { font-family: "Helvetica Neue", Arial, sans-serif; color: #2c3e50; backgro
 /* Results header */
 .ew-hdr { display: flex; justify-content: space-between; align-items: baseline;
   flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-.ew-hdr h2 { font-size: 24px; color: #1a1a2e; }
-.ew-logout { color: #2c5f8a; font-size: 14px; cursor: pointer; }
+.ew-hdr h2 { font-size: 24px; color: #1a1a2e; font-family: inherit; }
+.ew-logout { color: #199ad0; font-size: 14px; cursor: pointer; }
 .ew-section-title { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase;
   letter-spacing: .5px; margin: 26px 0 12px; }
 
@@ -81,7 +126,7 @@ body { font-family: "Helvetica Neue", Arial, sans-serif; color: #2c3e50; backgro
 
 /* Pay table */
 .ew-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #e0e0e0;
-  border-radius: 12px; }
+  border-radius: 12px; background: #fff; }
 table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
 .ew-tbl th { background: #f0f4f8; color: #2c5f8a; text-align: left; padding: 11px 12px;
   font-size: 12px; text-transform: uppercase; letter-spacing: .3px; white-space: nowrap;
@@ -98,6 +143,24 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
 </style>
 </head>
 <body>
+
+<!-- ── Site nav (matches plansman.com) ─────────────────── -->
+<nav id="pm-nav">
+  <div class="pm-container">
+    <div id="pm-logo">
+      <a href="https://www.plansman.com/"><img src="logo.png" alt="plansman.com"></a>
+    </div>
+    <ul>
+      <li><a href="https://www.plansman.com/">Home</a></li>
+      <li><a href="https://www.plansman.com/portfolio.html">Portfolio</a></li>
+      <li><a href="https://www.plansman.com/my-project.html">My Project</a></li>
+      <li class="pm-active"><a href="./">My Work</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div id="pm-main">
+<div class="pm-page-title">Employee Portal</div>
 <div class="ew-wrap">
   <p class="ew-sub" id="ew-sub">Sign in to see your projects</p>
 
@@ -123,6 +186,14 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
 
   <div class="ew-ftr">Plansman Inc &bull; Questions? Contact Lance</div>
 </div>
+</div>
+
+<!-- ── Site footer (matches plansman.com) ──────────────── -->
+<footer id="pm-footer">
+  <div class="pm-container">
+    southern california<span class="pm-dot">.</span><a href="mailto:projects@PLANSMAN.COM">projects@PLANSMAN.COM</a><span class="pm-dot">.</span><a href="tel:9498006106">949.800.6106</a>
+  </div>
+</footer>
 
 <script>
 (function () {
