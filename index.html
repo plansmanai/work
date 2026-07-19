@@ -94,15 +94,18 @@ body { font-family: 'Lato', "Helvetica Neue", Arial, sans-serif; color: #626262;
 .ew-due-none { background: #f0f1f3; color: #9aa0a6; font-weight: 600; }
 .ew-due-sub { font-size: 11px; color: #9aa0a6; margin-top: 3px; white-space: nowrap; }
 
-.ew-pay { font-size: 12.5px; line-height: 1.6; white-space: nowrap; }
-.ew-pay .ew-owed-amt { color: #b86e00; font-weight: 700; }
-.ew-pay .ew-paid-line { color: #27763a; }
-.ew-pay .ew-pay-lbl { color: #9aa0a6; }
+.ew-pay { font-size: 13px; line-height: 1.7; max-width: 250px; }
+.ew-pay-row { display: flex; justify-content: space-between; gap: 14px; white-space: nowrap; }
+.ew-pay-lbl { color: #9aa0a6; }
+.ew-pay-amt { font-variant-numeric: tabular-nums; font-weight: 600; }
+.ew-pay-row.ew-p-paid .ew-pay-lbl, .ew-pay-row.ew-p-paid .ew-pay-amt { color: #27763a; }
+.ew-pay-row.ew-p-owed .ew-pay-amt { color: #b86e00; font-weight: 700; }
+.ew-pay-row.ew-rule { border-top: 1px solid #d0d8e0; margin-top: 3px; padding-top: 3px; }
 
 .ew-row-tl td { padding: 0 12px 14px !important; border-bottom: 1px solid #e3e6ea; }
 .ew-row-main td { border-bottom: none !important; padding-bottom: 6px !important; }
 tr.ew-done td { opacity: .55; }
-.ew-addr { overflow: hidden; text-overflow: ellipsis; max-width: 340px; }
+.ew-addr { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ew-total-bar { display: flex; justify-content: flex-end; gap: 24px; font-size: 14px;
   padding: 12px 4px 0; color: #6b7280; }
 .ew-total-bar b { color: #b86e00; }
@@ -132,7 +135,8 @@ tr.ew-done td { opacity: .55; }
 /* Pay table */
 .ew-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #e0e0e0;
   border-radius: 12px; background: #fff; }
-table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
+table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff;
+  table-layout: fixed; min-width: 900px; }
 .ew-tbl th { background: #f0f4f8; color: #2c5f8a; text-align: left; padding: 11px 12px;
   font-size: 12px; text-transform: uppercase; letter-spacing: .3px; white-space: nowrap;
   border-bottom: 2px solid #d0d8e0; }
@@ -324,22 +328,25 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
     return h;
   }
 
+  function payRow(lbl, amt, cls) {
+    return '<div class="ew-pay-row' + (cls ? " " + cls : "") + '">' +
+           '<span class="ew-pay-lbl">' + lbl + '</span>' +
+           '<span class="ew-pay-amt">' + amt + "</span></div>";
+  }
+
   function payCell(j) {
     var hasAny = j.amount != null || j.balance != null || (j.payments && j.payments.length);
     if (!hasAny) return '<span class="ew-muted">—</span>';
     var h = '<div class="ew-pay">';
-    if (j.amount != null)
-      h += '<div><span class="ew-pay-lbl">Total</span> ' + money(j.amount) + "</div>";
+    if (j.amount != null) h += payRow("Total", money(j.amount), "");
     var pays = (j.payments || []).filter(function (p) { return p.paid; });
     for (var i = 0; i < pays.length; i++) {
-      h += '<div class="ew-paid-line">' + money(pays[i].paid) +
-           (pays[i].date ? ' <span class="ew-pay-lbl">' + esc(pays[i].date) + "</span>" : "") +
-           "</div>";
+      h += payRow("Paid" + (pays[i].date ? " " + esc(pays[i].date) : ""),
+                  money(pays[i].paid), "ew-p-paid");
     }
     var bal = Number(j.balance) || 0;
-    if (bal > 0) h += '<div><span class="ew-pay-lbl">Remaining</span> ' +
-                      '<span class="ew-owed-amt">' + money(bal) + "</span></div>";
-    else if (j.amount != null) h += '<div class="ew-paid-line">paid in full</div>';
+    if (bal > 0) h += payRow("Remaining", money(bal), "ew-p-owed ew-rule");
+    else if (j.amount != null) h += payRow("Remaining", "$0 — paid in full", "ew-p-paid ew-rule");
     return h + "</div>";
   }
 
@@ -388,7 +395,9 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
 
     // ── WORKFLOW-style table: data row + labeled progress row per project ──
     h += '<div class="ew-scroll"><table class="ew-tbl"><thead><tr>' +
-         '<th>Job</th><th>Address</th><th>Phase</th><th>Your due</th><th>Pay</th>' +
+         '<th style="width:7%">Job</th><th>Address</th>' +
+         '<th style="width:14%">Phase</th><th style="width:16%">Your due</th>' +
+         '<th style="width:22%">Pay</th>' +
          "</tr></thead><tbody>";
     for (var i = 0; i < jobs.length; i++) h += jobRows(jobs[i]);
     h += "</tbody></table></div>";
