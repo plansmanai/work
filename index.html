@@ -104,6 +104,11 @@ body { font-family: 'Lato', "Helvetica Neue", Arial, sans-serif; color: #626262;
 
 .ew-row-tl td { padding: 0 12px 14px !important; border-bottom: 1px solid #e3e6ea; }
 .ew-row-main td { border-bottom: none !important; padding-bottom: 6px !important; }
+.ew-row-todo td { border-bottom: none !important; padding: 2px 12px 0 !important; }
+.ew-todo { background: #f6f8fa; border-left: 3px solid #199ad0; border-radius: 0;
+  padding: 8px 12px; font-size: 13.5px; color: #1f2d3d; line-height: 1.5; }
+.ew-todo-lbl { font-size: 10.5px; font-weight: 700; color: #199ad0;
+  text-transform: uppercase; letter-spacing: .6px; margin-right: 10px; }
 tr.ew-done td { opacity: .55; }
 .ew-addr { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ew-total-bar { display: flex; justify-content: flex-end; gap: 24px; font-size: 14px;
@@ -169,8 +174,7 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
 </nav>
 
 <div id="pm-main">
-<div class="pm-page-title">Employee Portal</div>
-<div class="ew-wrap">
+<div class="ew-wrap" style="padding-top: 28px;">
   <p class="ew-sub" id="ew-sub">Sign in to see your projects</p>
 
   <!-- STEP 1: name -->
@@ -325,6 +329,8 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
     var h = '<span class="ew-due ' + cls + '">' + esc(due || (d + "d")) + "</span>";
     if (note) h += '<div class="ew-due-sub">' + note + "</div>";
     if (j.my_lane) h += '<div class="ew-due-sub">' + esc(j.my_lane) + " task</div>";
+    else if (!j.my_due_date && !j.my_days)
+      h += '<div class="ew-due-sub">project due</div>';
     return h;
   }
 
@@ -360,6 +366,12 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
       "<td>" + dueCell(j) + "</td>" +
       "<td>" + payCell(j) + "</td>" +
     "</tr>";
+    // "What to do" strip — fed by my_note when a source is wired up (TBD);
+    // until then it renders only when the field has content.
+    if (!isDone(j) && j.my_note)
+      h += '<tr class="ew-row-todo' + done + '"><td colspan="5">' +
+           '<div class="ew-todo"><span class="ew-todo-lbl">To do</span>' +
+           esc(j.my_note) + "</div></td></tr>";
     h += '<tr class="ew-row-tl' + done + '"><td colspan="5">' + timeline(j.phase) + "</td></tr>";
     return h;
   }
