@@ -8,6 +8,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<script>
+/* Embed-aware: inside the Weebly iframe (plansman.com/work) the site chrome
+   would DOUBLE the site's own nav in a cramped box — hide it and go fluid.
+   Standalone (work.plansman.com later) keeps the full chrome. Runs before
+   first paint so there's no flash. */
+if (window.self !== window.top) { document.documentElement.className += ' embedded'; }
+</script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -50,6 +57,16 @@ body { font-family: 'Lato', "Helvetica Neue", Arial, sans-serif; color: #626262;
   #pm-footer .pm-container { font-size: 16px; }
   #pm-footer .pm-dot { padding: 0 8px; }
 }
+
+/* ── Embedded mode (inside the Weebly iframe at plansman.com/work) ──
+   The host page already has the site's nav and footer — showing ours
+   twice in a ~900px box is noise. Chrome off, fluid width, transparent
+   background so the Weebly page shows through. */
+html.embedded #pm-nav, html.embedded #pm-footer { display: none; }
+html.embedded body { background: transparent; }
+html.embedded #pm-main { padding: 6px 0 20px; background: #fff; }
+html.embedded .pm-container, html.embedded .ew-wrap { width: 100%; padding-left: 8px; padding-right: 8px; }
+html.embedded table.ew-tbl { min-width: 760px; }
 
 /* ── Portal app ─────────────────────────────────────────── */
 .ew-wrap { width: min(1240px, 94vw); margin: 0 auto; padding: 12px 0 24px; color: #2c3e50; }
