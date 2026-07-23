@@ -99,11 +99,13 @@ html.embedded table.ew-tbl { min-width: 760px; }
 /* WORKFLOW-style table: one project per row group (data row + timeline row) */
 .ew-job { font-size: 15px; font-weight: 800; color: #1a1a2e; white-space: nowrap; }
 .ew-type { font-size: 11.5px; color: #8a9099; font-weight: 400; }
-.ew-badge { display: inline-block; padding: 4px 12px; border-radius: 16px; font-size: 13px;
-  font-weight: 700; letter-spacing: .2px; border: 2px solid currentColor; white-space: nowrap; }
+.ew-badge { display: inline-block; padding: 3px 11px; border-radius: 16px; font-size: 12.5px;
+  font-weight: 600; letter-spacing: .2px; border: 1.5px solid currentColor; white-space: nowrap; }
+.ew-addr { color: #6b7280; font-size: 13px; }
+.ew-pay { font-size: 12.5px; }
 .ew-muted { color: #aab; }
 
-.ew-due { display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 14px;
+.ew-due { display: inline-block; padding: 6px 14px; border-radius: 8px; font-size: 16px;
   font-weight: 800; white-space: nowrap; }
 .ew-due-red { background: #fdecea; color: #a32d2d; }
 .ew-due-amber { background: #fff3e0; color: #b86e00; }
@@ -123,9 +125,10 @@ html.embedded table.ew-tbl { min-width: 760px; }
 .ew-row-main td { border-bottom: none !important; padding-bottom: 6px !important; }
 .ew-row-todo td { border-bottom: none !important; padding: 2px 12px 0 !important; }
 .ew-todo { background: #f6f8fa; border-left: 3px solid #199ad0; border-radius: 0;
-  padding: 8px 12px; font-size: 13.5px; color: #1f2d3d; line-height: 1.5; }
-.ew-todo-lbl { font-size: 10.5px; font-weight: 700; color: #199ad0;
-  text-transform: uppercase; letter-spacing: .6px; margin-right: 10px; }
+  padding: 7px 11px; font-size: 13px; color: #1f2d3d; line-height: 1.45;
+  font-weight: 500; }
+.ew-todo-lbl { font-size: 11px; font-weight: 800; color: #199ad0;
+  text-transform: uppercase; letter-spacing: .6px; margin-right: 9px; }
 tr.ew-done td { opacity: .55; }
 .ew-addr { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ew-total-bar { display: flex; justify-content: flex-end; gap: 24px; font-size: 14px;
@@ -352,10 +355,9 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
            : d === 1 ? "due tomorrow" : d + " days left";
     }
     var h = '<span class="ew-due ' + cls + '">' + esc(due || (d + "d")) + "</span>";
-    if (note) h += '<div class="ew-due-sub">' + note + "</div>";
-    if (j.my_lane) h += '<div class="ew-due-sub">' + esc(j.my_lane) + " task</div>";
-    else if (!j.my_due_date && !j.my_days)
-      h += '<div class="ew-due-sub">project due</div>';
+    var sub = note;
+    if (j.my_lane) sub = (sub ? sub + " · " : "") + esc(j.my_lane);
+    if (sub) h += '<div class="ew-due-sub">' + sub + "</div>";
     return h;
   }
 
@@ -395,7 +397,8 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
     // until then it renders only when the field has content.
     if (!isDone(j) && !isParked(j) && j.my_note)
       h += '<tr class="ew-row-todo' + done + '"><td colspan="5">' +
-           '<div class="ew-todo"><span class="ew-todo-lbl">To do</span>' +
+           '<div class="ew-todo"><span class="ew-todo-lbl">' +
+           esc((j.my_lane || 'To do')) + ':</span>' +
            esc(j.my_note) + "</div></td></tr>";
     h += '<tr class="ew-row-tl' + done + '"><td colspan="5">' + timeline(j.phase) + "</td></tr>";
     return h;
