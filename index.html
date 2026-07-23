@@ -326,11 +326,11 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
   }
 
   function myDays(j) {
-    var v = (j.my_days != null && j.my_days !== "") ? j.my_days : j.days_till_due;
-    var n = parseInt(v, 10);
+    // LANE dates only — the project-due fallback is gone (Lance 2026-07-22)
+    var n = parseInt(j.my_days, 10);
     return isNaN(n) ? null : n;
   }
-  function myDue(j) { return j.my_due_date || j.due_date || ""; }
+  function myDue(j) { return j.my_due_date || ""; }
   function isDone(j) { return (j.phase || "").trim().toLowerCase() === "complete"; }
   function isParked(j) {
     // "Out of their court": their lane date was cleared -> nothing due
