@@ -20,6 +20,10 @@ if (window.self !== window.top) { document.documentElement.className += ' embedd
 
 /* ── Site chrome (replicates plansman.com theme) ────────── */
 html, body { height: 100%; }
+/* Stop iOS Safari's automatic font inflation — it was doubling the to-do
+   strip on phones while leaving table cells alone, making all our font
+   sizing appear broken on mobile. Our pixel sizes are the law. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { font-family: 'Lato', "Helvetica Neue", Arial, sans-serif; color: #626262;
   background: #222121; display: flex; flex-direction: column; }
 .pm-container { width: min(1240px, 94vw); margin: 0 auto; }
@@ -172,7 +176,7 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
 .ew-paid { color: #27763a; }
 .ew-total-row td { background: #f8f9fa; font-weight: 700; border-top: 2px solid #d0d8e0; }
 .ew-pay-detail { font-size: 12px; color: #777; }
-.ew-tbl .ew-job { font-size: 14px; }
+.ew-tbl .ew-job { font-size: 15px; }
 .ew-ftr { text-align: center; font-size: 12px; color: #bbb; margin-top: 28px; }
 </style>
 </head>
