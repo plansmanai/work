@@ -342,7 +342,7 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
 
   function dueCell(j) {
     if (isDone(j)) return '<span class="ew-due ew-due-none">done</span>';
-    if (isParked(j)) return '<span class="ew-due ew-due-none">not in your court</span>';
+    if (isParked(j)) return '<span class="ew-due ew-due-none">not in your lane</span>';
     var due = myDue(j), d = myDays(j);
     if (!due && d == null) return '<span class="ew-due ew-due-none">no date</span>';
     var cls = "ew-due-none", note = "";
