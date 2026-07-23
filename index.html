@@ -332,9 +332,17 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
   }
   function myDue(j) { return j.my_due_date || j.due_date || ""; }
   function isDone(j) { return (j.phase || "").trim().toLowerCase() === "complete"; }
+  function isParked(j) {
+    // "Out of their court": their lane date was cleared -> nothing due
+    // from them right now. Grey + sink (Lance 2026-07-22). Only when the
+    // payload actually carries lane fields (post-ALTER) — otherwise
+    // everything would grey out on old data.
+    return ("my_due_date" in j) && !j.my_due_date && !j.my_days && !isDone(j);
+  }
 
   function dueCell(j) {
     if (isDone(j)) return '<span class="ew-due ew-due-none">done</span>';
+    if (isParked(j)) return '<span class="ew-due ew-due-none">not in your court</span>';
     var due = myDue(j), d = myDays(j);
     if (!due && d == null) return '<span class="ew-due ew-due-none">no date</span>';
     var cls = "ew-due-none", note = "";
@@ -374,7 +382,7 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
   }
 
   function jobRows(j) {
-    var done = isDone(j) ? " ew-done" : "";
+    var done = (isDone(j) || isParked(j)) ? " ew-done" : "";
     var h = '<tr class="ew-row-main' + done + '">' +
       '<td><span class="ew-job">' + esc(j.proj_no) + "</span>" +
       (j.type ? '<div class="ew-type">' + esc(j.type) + "</div>" : "") + "</td>" +
@@ -385,7 +393,7 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
     "</tr>";
     // "What to do" strip — fed by my_note when a source is wired up (TBD);
     // until then it renders only when the field has content.
-    if (!isDone(j) && j.my_note)
+    if (!isDone(j) && !isParked(j) && j.my_note)
       h += '<tr class="ew-row-todo' + done + '"><td colspan="5">' +
            '<div class="ew-todo"><span class="ew-todo-lbl">To do</span>' +
            esc(j.my_note) + "</div></td></tr>";
@@ -413,8 +421,9 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
     // ── Sort: most urgent first (their lane days, else phase days),
     //    dateless after dated, Complete at the bottom ──
     jobs.sort(function (a, b) {
-      var da = isDone(a) ? 1 : 0, db = isDone(b) ? 1 : 0;
-      if (da !== db) return da - db;
+      var ra = isDone(a) ? 2 : (isParked(a) ? 1 : 0);
+      var rb = isDone(b) ? 2 : (isParked(b) ? 1 : 0);
+      if (ra !== rb) return ra - rb;
       var na = myDays(a), nb = myDays(b);
       if (na == null && nb == null) return String(a.proj_no).localeCompare(String(b.proj_no));
       if (na == null) return 1;
