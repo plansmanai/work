@@ -347,9 +347,18 @@ table.ew-tbl { width: 100%; border-collapse: collapse; font-size: 14px; backgrou
     return ("my_due_date" in j) && !j.my_due_date && !j.my_days && !isDone(j);
   }
 
+  function isReview(j) {
+    return String(j.my_due_date || "").trim().toUpperCase() === "REVIEW";
+  }
+
   function dueCell(j) {
     if (isDone(j)) return '<span class="ew-due ew-due-none">done</span>';
     if (isParked(j)) return '<span class="ew-due ew-due-none">not in your lane</span>';
+    if (isReview(j)) {
+      var rsub = "with Lance" + (j.my_lane ? " · " + esc(j.my_lane) : "");
+      return '<span class="ew-due ew-due-red">REVIEW</span>' +
+             '<div class="ew-due-sub">' + rsub + "</div>";
+    }
     var due = myDue(j), d = myDays(j);
     if (!due && d == null) return '<span class="ew-due ew-due-none">no date</span>';
     var cls = "ew-due-none", note = "";
